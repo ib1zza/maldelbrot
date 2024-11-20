@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Множество Мандельброта</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #000;
+        }
+        canvas {
+            border: 1px solid #fff;
+        }
+        #controls {
+            margin: 10px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mandelbrotCanvas" width="800" height="800"></canvas>
+    <div id="controls">
+        <button id="zoomIn">+</button>
+        <button id="reset">Сброс</button>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('mandelbrotCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        let xMin = -2;
+        let xMax = 2;
+        let yMin = -2;
+        let yMax = 2;
+        let maxIter = 100;
+
+        let isDragging = false;
+        let startX, startY;
+
+        function mandelbrot() {
+            for (let x = 0; x < width; x++) {
+                for (let y = 0; y < height; y++) {
+                    let zx = 0;
+                    let zy = 0;
+                    let i = maxIter;
+                    const cX = xMin + (x / width) * (xMax - xMin);
+                    const cY = yMin + (y / height) * (yMax - yMin);
+                    
+                    while (zx * zx + zy * zy < 4 && i > 0) {
+                        const tmp = zx * zx - zy * zy + cX;
+                        zy = 2 * zx * zy + cY;
+                        zx = tmp;
+                        i--;
+                    }
+
+                    const r = (i === 0) ? 0 : (i % 8) * 32;
+                    const g = (i === 0) ? 0 : (i % 16) * 16;
+                    const b = (i === 0) ? 0 : (i % 32) * 8;
+
+                    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            }
+        }
+
+        function zoomIn() {
+            const zoomFactor = 0.5; // Увеличение в 2 раза
+            const xCenter = (xMin + xMax) / 2;
+            const yCenter = (yMin + yMax) / 2;
+
+            xMin = xCenter + (xMin - xCenter) * zoomFactor;
+            xMax = xCenter + (xMax - xCenter) * zoomFactor;
+            yMin = yCenter + (yMin - yCenter) * zoomFactor;
+            yMax = yCenter + (yMax - yCenter) * zoomFactor;
+
+            mandelbrot();
+        }
+
+        function reset() {
+            xMin = -2;
+            xMax = 2;
+            yMin = -2;
+            yMax = 2;
+            mandelbrot();
+        }
+
+        function startDrag(event) {
+            isDragging = true;
+            startX = event.offsetX;
+            startY = event.offsetY;
+        }
+
+        function drag(event) {
+            if (isDragging) {
+                const dx = event.offsetX - startX;
+                const dy = event.offsetY - startY;
+
+                const xRange = xMax - xMin;
+                const yRange = yMax - yMin;
+
+                xMin += (dx / width) * xRange;
+                xMax += (dx / width) * xRange;
+                yMin += (dy / height) * yRange;
+                yMax += (dy / height) * yRange;
+
+                startX = event.offsetX;
+                startY = event.offsetY;
+
+                mandelbrot();
+            }
+        }
+
+        function endDrag() {
+            isDragging = false;
+        }
+
+        document.getElementById('zoomIn').addEventListener ('click', zoomIn);
+        document.getElementById('reset').addEventListener('click', reset);
+        canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mouseup', endDrag);
+        canvas.addEventListener('mouseleave', endDrag);
+
+        // Изначальная отрисовка
+ ('click', zoomIn);
+        document.getElementById('reset').addEventListener('click', reset);
+        canvas.addEventListener('mousedown', startDrag);
+        canvas.addEventListener('mousemove', drag);
+        canvas.addEventListener('mouseup', endDrag);
+        canvas.addEventListener('mouseleave', endDrag);
+
+        // Изначальная от        mandelbrot();
+    </script>
+</рисовка
+        mandbody>
+</html>
