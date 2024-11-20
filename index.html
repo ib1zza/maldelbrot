@@ -124,11 +124,63 @@
       document.getElementById("reset").addEventListener("click", reset);
 
       // Обработчик события клика на холсте для приближения
-      canvas.addEventListener("click", (event) => {
+      //   canvas.addEventListener("click", (event) => {
+      //     const rect = canvas.getBoundingClientRect();
+      //     const xMouse = event.clientX - rect.left;
+      //     const yMouse = event.clientY - rect.top;
+      //     zoomIn(xMouse, yMouse);
+      //   });
+
+      canvas.addEventListener("wheel", (event) => {
+        const zoomDiff = 0.5;
+        const zoomFactor = event.deltaY > 0 ? 1 + zoomDiff : 1 - zoomDiff; // Увеличение или уменьшение в 1.1 раза
         const rect = canvas.getBoundingClientRect();
         const xMouse = event.clientX - rect.left;
         const yMouse = event.clientY - rect.top;
-        zoomIn(xMouse, yMouse);
+        const xCenter = xMin + (xMouse / width) * (xMax - xMin);
+        const yCenter = yMin + (yMouse / height) * (yMax - yMin);
+
+        xMin = xCenter + (xMin - xCenter) / zoomFactor;
+        xMax = xCenter + (xMax - xCenter) / zoomFactor;
+        yMin = yCenter + (yMin - yCenter) / zoomFactor;
+        yMax = yCenter + (yMax - yCenter) / zoomFactor;
+
+        mandelbrot();
+      });
+
+      let isDragging = false;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      canvas.addEventListener("mousedown", (event) => {
+        isDragging = true;
+        const rect = canvas.getBoundingClientRect();
+        offsetX = event.clientX - rect.left;
+        offsetY = event.clientY - rect.top;
+      });
+
+      canvas.addEventListener("mousemove", (event) => {
+        if (isDragging) {
+          const rect = canvas.getBoundingClientRect();
+          const newX = event.clientX - rect.left;
+          const newY = event.clientY - rect.top;
+          const dx = newX - offsetX;
+          const dy = newY - offsetY;
+
+          xMin -= (dx / width) * (xMax - xMin);
+          xMax -= (dx / width) * (xMax - xMin);
+          yMin -= (dy / height) * (yMax - yMin);
+          yMax -= (dy / height) * (yMax - yMin);
+
+          offsetX = newX;
+          offsetY = newY;
+
+          mandelbrot();
+        }
+      });
+
+      canvas.addEventListener("mouseup", () => {
+        isDragging = false;
       });
 
       mandelbrot();
