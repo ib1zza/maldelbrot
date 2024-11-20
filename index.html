@@ -7,7 +7,7 @@
     <style>
       body {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         height: 100vh;
         margin: 0;
@@ -18,27 +18,34 @@
       }
       #controls {
         margin: 10px;
+        display: flex;
+        flex-wrap: wrap;
       }
       button {
         margin: 5px;
         padding: 10px;
         font-size: 16px;
       }
+      #info {
+        color: white;
+        margin: 10px;
+      }
     </style>
   </head>
   <body>
     <canvas id="mandelbrotCanvas" width="800" height="800"></canvas>
-    <div id="controls">
-      <button id="point1">(-0.75, 0.186)</button>
-      <button id="point2">(-0.745, 0.186)</button>
-      <button id="point3">(-0.8, 0.156)</button>
-      <button id="point4">(-0.4, 0.6)</button>
-      <button id="point5">(-1.5, 0)</button>
-      <button id="reset">Сброс</button>
-      <button id="autoZoom">Авто zoom</button>
+    <div class="desc">
+      <div id="info"></div>
+      <div id="controls">
+        <button id="point1">(-0.75, 0.186)</button>
+        <button id="point2">(-0.745, 0.186)</button>
+        <button id="point3">(-0.8, 0.156)</button>
+        <button id="point4">(-0.4, 0.6)</button>
+        <button id="point5">(-1.5, 0)</button>
+        <button id="reset">Сброс</button>
+        <button id="autoZoom">Авто zoom</button>
+      </div>
     </div>
-
-    <div id="info" style="color: white; margin: 10px"></div>
 
     <script>
       const canvas = document.getElementById("mandelbrotCanvas");
@@ -47,10 +54,11 @@
       const height = canvas.height;
 
       // Начальные значения для зума
+
+      //   -0.37658135381313224 0.6622053085935699
       let xMin = -2;
       let xMax = 2;
       let yMin = -2;
-
       let yMax = 2;
       let maxIter = 1000;
 
@@ -66,7 +74,7 @@
             const cX = xMin + (x / width) * (xMax - xMin);
             const cY = yMin + (y / height) * (yMax - yMin);
 
-            while (zx * zx + zy * zy < 4 && i > 0) {
+            while (zx * zx + zy * zy < 16 && i > 0) {
               const tmp = zx * zx - zy * zy + cX;
               zy = 2 * zx * zy + cY;
               zx = tmp;
@@ -94,6 +102,26 @@
           }
         }
         ctx.putImageData(imageData, 0, 0);
+        updateInfo();
+      }
+
+      function toScientificNotation(num, decimalPlaces = 4) {
+        if (num > 1 / 10 ** decimalPlaces) {
+          return num.toFixed(decimalPlaces);
+        }
+        return num.toExponential(decimalPlaces);
+      }
+
+      function updateInfo() {
+        const centerX = (xMin + xMax) / 2;
+        const centerY = (yMin + yMax) / 2;
+        const zoomLevel = Math.abs(xMax - xMin);
+
+        document.getElementById(
+          "info"
+        ).innerText = `Координаты: (${centerX.toFixed(3)}, ${centerY.toFixed(
+          3
+        )}) | Длинна стороны: ${toScientificNotation(zoomLevel)}`;
       }
 
       function zoomIn(xMouse, yMouse) {
@@ -114,7 +142,7 @@
         xMax = 2;
         yMin = -2;
         yMax = 2;
-        maxIter = 100;
+        maxIter = 1000;
         clearInterval(autoZoomInterval);
         mandelbrot();
       }
@@ -153,7 +181,16 @@
         .addEventListener("click", () => setPoint(-0.8, -0.79, 0.156, 0.157));
       document
         .getElementById("point4")
-        .addEventListener("click", () => setPoint(-0.4, -0.3, 0.6, 0.7));
+        // -0.37658135381313224 0.6622053085935699
+        // .addEventListener("click", () => setPoint(-0.4, -0.3, 0.6, 0.7));
+        .addEventListener("click", () =>
+          setPoint(
+            -0.47658135381313224,
+            -0.27658135381313224,
+            0.5622053085935699,
+            0.7622053085935699
+          )
+        );
       document
         .getElementById("point5")
         .addEventListener("click", () => setPoint(-1.5, -1.4, 0, 0.1));
