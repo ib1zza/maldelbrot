@@ -2,7 +2,6 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -66,20 +65,13 @@
         <button id="colorBlackWhite">Черно-белый</button>
         <button id="colorRGB">RGB</button>
         <button id="colorRainbow">Радуга</button>
-
         <button id="saveImage">Сохранить изображение</button>
-        <!-- New save button -->
+        <button id="zoomIn">+</button>
+        <button id="zoomOut">-</button>
       </div>
     </div>
 
     <script>
-      document.getElementById("saveImage").addEventListener("click", () => {
-        const link = document.createElement("a");
-        link.download = "mandelbrot.png"; // The name for the downloaded file
-        link.href = canvas.toDataURL("image/png"); // Get the data URL of the canvas
-        link.click(); // Trigger the download
-      });
-
       const canvas = document.getElementById("mandelbrotCanvas");
       const ctx = canvas.getContext("2d");
       const width = 800;
@@ -131,14 +123,11 @@
 
             // Color assignment based on color mode
             if (colorMode === "BlackWhite") {
-              // Черно-белый градиент
-              const shade = (i / maxIter) * 255; // Создаем оттенок серого на основе итераций
-
-              data[pixelIndex] = shade; // Красный
-              data[pixelIndex + 1] = shade; // Зеленый
-              data[pixelIndex + 2] = shade; // Синий
+              const shade = (i / maxIter) * 255; // Create a gray shade based on iterations
+              data[pixelIndex] = shade; // Red
+              data[pixelIndex + 1] = shade; // Green
+              data[pixelIndex + 2] = shade; // Blue
             } else if (colorMode === "RGB") {
-              // RGB colors based on iterations
               if (i === 0) {
                 data[pixelIndex] = 0; // Red
                 data[pixelIndex + 1] = 0; // Green
@@ -147,20 +136,18 @@
                 const r = (i % 8) * 32;
                 const g = (i % 16) * 16;
                 const b = (i % 32) * 8;
-
                 data[pixelIndex] = r;
                 data[pixelIndex + 1] = g;
                 data[pixelIndex + 2] = b;
               }
             } else if (colorMode === "Rainbow") {
-              // Rainbow colors based on iterations
               if (i === 0) {
-                data[pixelIndex] = 0; // Красный
-                data[pixelIndex + 1] = 0; // Зеленый
-                data[pixelIndex + 2] = 0; // Синий
+                data[pixelIndex] = 0; // Red
+                data[pixelIndex + 1] = 0; // Green
+                data[pixelIndex + 2] = 0; // Blue
               } else {
-                const hue = (i / maxIter) * 360; // Угол цвета в HSL
-                const rgb = hslToRgb(hue / 360, 1, 0.5); // Преобразуем HSL в RGB
+                const hue = (i / maxIter) * 360; // Color angle in HSL
+                const rgb = hslToRgb(hue / 360, 1, 0.5); // Convert HSL to RGB
                 data[pixelIndex] = rgb[0];
                 data[pixelIndex + 1] = rgb[1];
                 data[pixelIndex + 2] = rgb[2];
@@ -199,7 +186,6 @@
         const centerX = (xMin + xMax) / 2;
         const centerY = (yMin + yMax) / 2;
         const zoomLevel = Math.abs(xMax - xMin);
-
         document.getElementById(
           "info"
         ).innerText = `Координаты: (${centerX.toFixed(3)}, ${centerY.toFixed(
@@ -214,35 +200,12 @@
         return num.toExponential(decimalPlaces);
       }
 
-      // document.body.addEventListener(
-      //   "touchmove",
-      //   function (event) {
-      //     event.preventDefault();
-      //   },
-      //   { passive: false }
-      // );
-
-      function zoomIn(xMouse, yMouse) {
-        const zoomFactor = 0.5; // Увеличение в 2 раза
-        const xCenter = xMin + (xMouse / widthToZoom) * (xMax - xMin);
-        const yCenter = yMin + (yMouse / heightToZoom) * (yMax - yMin);
-
-        console.log(xCenter, yCenter, yMouse, widthToZoom);
-        xMin = xCenter + (xMin - xCenter) * zoomFactor;
-        xMax = xCenter + (xMax - xCenter) * zoomFactor;
-        yMin = yCenter + (yMin - yCenter) * zoomFactor;
-        yMax = yCenter + (yMax - yCenter) * zoomFactor;
-
-        mandelbrot();
-      }
-
       function reset() {
         xMin = -2;
         xMax = 2;
         yMin = -2;
         yMax = 2;
         maxIter = 1000;
-        clearInterval(autoZoomInterval);
         colorMode = "RGB"; // Reset to default color mode
         mandelbrot();
       }
@@ -255,11 +218,10 @@
         mandelbrot();
       }
 
-      function zoomInAuto() {
-        const zoomFactor = 0.9;
-        const xCenter = xMin + (widthToZoom / 2 / widthToZoom) * (xMax - xMin);
-        const yCenter =
-          yMin + (heightToZoom / 2 / heightToZoom) * (yMax - yMin);
+      function zoomIn() {
+        const zoomFactor = 0.5; // Увеличение в 2 раза
+        const xCenter = (xMin + xMax) / 2;
+        const yCenter = (yMin + yMax) / 2;
 
         xMin = xCenter + (xMin - xCenter) * zoomFactor;
         xMax = xCenter + (xMax - xCenter) * zoomFactor;
@@ -269,98 +231,10 @@
         mandelbrot();
       }
 
-      let autoZoomInterval;
-
-      document
-        .getElementById("point1")
-        .addEventListener("click", () => setPoint(-0.75, -0.74, 0.186, 0.187));
-      document
-        .getElementById("point2")
-        .addEventListener("click", () => setPoint(-0.745, -0.739, 0.186, 0.19));
-      document
-        .getElementById("point3")
-        .addEventListener("click", () => setPoint(-0.8, -0.79, 0.156, 0.157));
-      document
-        .getElementById("point4")
-        .addEventListener("click", () =>
-          setPoint(
-            -0.47658135381313224,
-            -0.27658135381313224,
-            0.5622053085935699,
-            0.7622053085935699
-          )
-        );
-      document
-        .getElementById("point5")
-        .addEventListener("click", () => setPoint(-1.5, -1.4, 0, 0.1));
-      document.getElementById("reset").addEventListener("click", reset);
-      document.getElementById("autoZoom").addEventListener("click", () => {
-        autoZoomInterval = setInterval(() => {
-          zoomInAuto();
-        }, 200);
-      });
-
-      // canvas.addEventListener("touchstart", (event) => {
-      //   if (event.touches.length === 2) {
-      //     const dx = event.touches[0].clientX - event.touches[1].clientX;
-      //     const dy = event.touches[0].clientY - event.touches[1].clientY;
-      //     lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-      //   }
-      // });
-
-      // canvas.addEventListener("touchmove", (event) => {
-      //   if (event.touches.length === 2 && lastTouchDistance !== null) {
-      //     const dx = event.touches[0].clientX - event.touches[1].clientX;
-      //     const dy = event.touches[0].clientY - event.touches[1].clientY;
-      //     const currentTouchDistance = Math.sqrt(dx * dx + dy * dy);
-
-      //     const zoomFactor = currentTouchDistance / lastTouchDistance;
-
-      //     const rect = canvas.getBoundingClientRect();
-      //     const xMouse = (event.touches[0].clientX - rect.left) / width;
-      //     const yMouse = (event.touches[0].clientY - rect.top) / height;
-      //     const xCenter = xMin + xMouse * (xMax - xMin);
-      //     const yCenter = yMin + yMouse * (yMax - yMin);
-
-      //     xMin = xCenter + (xMin - xCenter) / zoomFactor;
-      //     xMax = xCenter + (xMax - xCenter) / zoomFactor;
-      //     yMin = yCenter + (yMin - yCenter) / zoomFactor;
-      //     yMax = yCenter + (yMax - yCenter) / zoomFactor;
-
-      //     mandelbrot();
-      //     lastTouchDistance = currentTouchDistance;
-      //   }
-      // });
-
-      // canvas.addEventListener("touchend", () => {
-      //   lastTouchDistance = null;
-      // });
-
-      document
-        .getElementById("colorBlackWhite")
-        .addEventListener("click", () => {
-          colorMode = "BlackWhite";
-          mandelbrot();
-        });
-
-      document.getElementById("colorRGB").addEventListener("click", () => {
-        colorMode = "RGB";
-        mandelbrot();
-      });
-
-      document.getElementById("colorRainbow").addEventListener("click", () => {
-        colorMode = "Rainbow";
-        mandelbrot();
-      });
-
-      canvas.addEventListener("wheel", (event) => {
-        const zoomDiff = 0.5;
-        const zoomFactor = event.deltaY > 0 ? 1 + zoomDiff : 1 - zoomDiff; // Увеличение или уменьшение в 1.1 раза
-        const rect = canvas.getBoundingClientRect();
-        const xMouse = event.clientX - rect.left;
-        const yMouse = event.clientY - rect.top;
-        const xCenter = xMin + (xMouse / widthToZoom) * (xMax - xMin);
-        const yCenter = yMin + (yMouse / heightToZoom) * (yMax - yMin);
+      function zoomOut() {
+        const zoomFactor = 0.5; // Уменьшение в 2 раза
+        const xCenter = (xMin + xMax) / 2;
+        const yCenter = (yMin + yMax) / 2;
 
         xMin = xCenter + (xMin - xCenter) / zoomFactor;
         xMax = xCenter + (xMax - xCenter) / zoomFactor;
@@ -368,7 +242,10 @@
         yMax = yCenter + (yMax - yCenter) / zoomFactor;
 
         mandelbrot();
-      });
+      }
+
+      document.getElementById("zoomIn").addEventListener("click", zoomIn);
+      document.getElementById("zoomOut").addEventListener("click", zoomOut);
 
       let isDragging = false;
       let offsetX = 0;
@@ -402,6 +279,40 @@
       });
 
       canvas.addEventListener("mouseup", () => {
+        isDragging = false;
+      });
+
+      // Touch events for mobile devices
+      canvas.addEventListener("touchstart", (event) => {
+        isDragging = true;
+        const rect = canvas.getBoundingClientRect();
+        const touch = event.touches[0];
+        offsetX = touch.clientX - rect.left;
+        offsetY = touch.clientY - rect.top;
+      });
+
+      canvas.addEventListener("touchmove", (event) => {
+        if (isDragging) {
+          const rect = canvas.getBoundingClientRect();
+          const touch = event.touches[0];
+          const newX = touch.clientX - rect.left;
+          const newY = touch.clientY - rect.top;
+          const dx = newX - offsetX;
+          const dy = newY - offsetY;
+
+          xMin -= (dx / width) * (xMax - xMin);
+          xMax -= (dx / width) * (xMax - xMin);
+          yMin -= (dy / height) * (yMax - yMin);
+          yMax -= (dy / height) * (yMax - yMin);
+
+          offsetX = newX;
+          offsetY = newY;
+
+          mandelbrot();
+        }
+      });
+
+      canvas.addEventListener("touchend", () => {
         isDragging = false;
       });
 
