@@ -96,8 +96,9 @@
       let xMax = 2;
       let yMin = -2;
       let yMax = 2;
-      let maxIter = 100;
+      let maxIter = 400;
       let colorMode = "RGB"; // Default color mode
+      let withBg = false;
 
       let bgColor = [0, 255, 255];
 
@@ -128,13 +129,15 @@
 
             const pixelIndex = (x + y * width) * 4;
 
-            if (i > maxIter - 30) {
-              const col = getDefaultBgColor();
-              data[pixelIndex] = col[0]; // Red
-              data[pixelIndex + 1] = col[1]; // Green
-              data[pixelIndex + 2] = col[2]; // Blue
-              data[pixelIndex + 3] = 255; // Alpha
-              continue;
+            if (withBg) {
+              if (i > maxIter - 30) {
+                const col = getDefaultBgColor();
+                data[pixelIndex] = col[0]; // Red
+                data[pixelIndex + 1] = col[1]; // Green
+                data[pixelIndex + 2] = col[2]; // Blue
+                data[pixelIndex + 3] = 255; // Alpha
+                continue;
+              }
             }
 
             // Color assignment based on color mode
@@ -230,7 +233,15 @@
 
       document
         .getElementById("point1")
-        .addEventListener("click", () => setPoint(-0.75, -0.74, 0.186, 0.187));
+        // -0.3805060593809112 -0.3772581898548366 0.6609624087172162 0.6642102782432908
+        .addEventListener("click", () =>
+          setPoint(
+            -0.3805060593809112,
+            -0.3772581898548366,
+            0.6609624087172162,
+            0.6642102782432908
+          )
+        );
       document
         .getElementById("point2")
         // -0.7457158825305376 -0.7457158825155342 0.18679454434401785 0.18679454435407586
@@ -260,6 +271,9 @@
         .addEventListener("click", () => setPoint(-1.5, -1.4, 0, 0.1));
       document.getElementById("reset").addEventListener("click", reset);
       document.getElementById("autoZoom").addEventListener("click", () => {
+        if (autoZoomInterval) {
+          clearInterval(autoZoomInterval);
+        }
         autoZoomInterval = setInterval(() => {
           zoomInAuto();
         }, 200);
@@ -363,6 +377,8 @@
         yMax = 2;
         maxIter = 400;
         colorMode = "RGB"; // Reset to default color mode
+        withBg = false;
+        clearInterval(autoZoomInterval);
         mandelbrot();
       }
 
@@ -485,6 +501,7 @@
       customColor.addEventListener("change", (e) => {
         console.log(e.target);
         bgColor = rgbFromHex(customColor.value);
+        withBg = true;
         mandelbrot();
       });
 
