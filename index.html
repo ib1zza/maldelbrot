@@ -286,6 +286,42 @@
         }, 200);
       });
 
+      canvas.addEventListener("touchstart", (event) => {
+        if (event.touches.length === 2) {
+          const dx = event.touches[0].clientX - event.touches[1].clientX;
+          const dy = event.touches[0].clientY - event.touches[1].clientY;
+          lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+        }
+      });
+
+      canvas.addEventListener("touchmove", (event) => {
+        if (event.touches.length === 2 && lastTouchDistance !== null) {
+          const dx = event.touches[0].clientX - event.touches[1].clientX;
+          const dy = event.touches[0].clientY - event.touches[1].clientY;
+          const currentTouchDistance = Math.sqrt(dx * dx + dy * dy);
+
+          const zoomFactor = currentTouchDistance / lastTouchDistance;
+
+          const rect = canvas.getBoundingClientRect();
+          const xMouse = (event.touches[0].clientX - rect.left) / width;
+          const yMouse = (event.touches[0].clientY - rect.top) / height;
+          const xCenter = xMin + xMouse * (xMax - xMin);
+          const yCenter = yMin + yMouse * (yMax - yMin);
+
+          xMin = xCenter + (xMin - xCenter) / zoomFactor;
+          xMax = xCenter + (xMax - xCenter) / zoomFactor;
+          yMin = yCenter + (yMin - yCenter) / zoomFactor;
+          yMax = yCenter + (yMax - yCenter) / zoomFactor;
+
+          mandelbrot();
+          lastTouchDistance = currentTouchDistance;
+        }
+      });
+
+      canvas.addEventListener("touchend", () => {
+        lastTouchDistance = null;
+      });
+
       document
         .getElementById("colorBlackWhite")
         .addEventListener("click", () => {
