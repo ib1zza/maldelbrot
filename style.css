@@ -1,5 +1,6 @@
 body {
     min-height: 100vh;
+    touch-action: pan-y; /* Allows vertical panning but disables zooming */
 }
 
 .mandelbrotCanvas {
