@@ -99,8 +99,10 @@
       let maxIter = 100;
       let colorMode = "RGB"; // Default color mode
 
+      let bgColor = [0, 255, 255];
+
       function getDefaultBgColor() {
-        return [0, 255, 255];
+        return bgColor;
       }
 
       function mandelbrot() {
@@ -468,6 +470,22 @@
 
       canvas.addEventListener("touchend", () => {
         isDragging = false;
+      });
+
+      const customColor = document.getElementById("customColor");
+
+      function rgbFromHex(ev) {
+        const color = ev;
+        const r = parseInt(color.substr(1, 2), 16);
+        const g = parseInt(color.substr(3, 2), 16);
+        const b = parseInt(color.substr(5, 2), 16);
+        return [r, g, b];
+      }
+
+      customColor.addEventListener("change", (e) => {
+        console.log(e.target);
+        bgColor = rgbFromHex(customColor.value);
+        mandelbrot();
       });
 
       mandelbrot();
