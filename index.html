@@ -6,6 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <link rel="stylesheet" href="style.css" />
     <title>Множество Мандельброта</title>
     <style>
       body {
@@ -66,6 +67,10 @@
         <button id="colorRGB">RGB</button>
         <button id="colorRainbow">Радуга</button>
         <button id="saveImage">Сохранить изображение</button>
+        <label for="customColor" class="btn">
+          <span>Пользовательский цвет</span>
+          <input type="color" id="customColor" hidden />
+        </label>
         <button id="zoomIn">+</button>
         <button id="zoomOut">-</button>
       </div>
@@ -101,6 +106,8 @@
       function mandelbrot() {
         const imageData = ctx.createImageData(width, height);
         const data = imageData.data;
+
+        console.log(xMin, xMax, yMin, yMax);
 
         for (let x = 0; x < width; x++) {
           for (let y = 0; y < height; y++) {
@@ -224,7 +231,15 @@
         .addEventListener("click", () => setPoint(-0.75, -0.74, 0.186, 0.187));
       document
         .getElementById("point2")
-        .addEventListener("click", () => setPoint(-0.745, -0.739, 0.186, 0.19));
+        // -0.7457158825305376 -0.7457158825155342 0.18679454434401785 0.18679454435407586
+        .addEventListener("click", () =>
+          setPoint(
+            -0.8457158825305376,
+            -0.6457158825155342,
+            0.08679454434401785,
+            0.28679454435407586
+          )
+        );
       document
         .getElementById("point3")
         .addEventListener("click", () => setPoint(-0.8, -0.79, 0.156, 0.157));
