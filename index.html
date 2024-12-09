@@ -16,6 +16,7 @@
         height: 100vh;
         margin: 0;
         background-color: #000;
+        overflow: hidden;
       }
       canvas {
         border: 1px solid #fff;
@@ -83,6 +84,9 @@
       const ctx = canvas.getContext("2d");
       const width = 800;
       const height = 800;
+
+      const widthToZoom = parseInt(window.getComputedStyle(canvas).width);
+      const heightToZoom = parseInt(window.getComputedStyle(canvas).height);
 
       let xMin = -2;
       let xMax = 2;
@@ -210,11 +214,20 @@
         return num.toExponential(decimalPlaces);
       }
 
+      // document.body.addEventListener(
+      //   "touchmove",
+      //   function (event) {
+      //     event.preventDefault();
+      //   },
+      //   { passive: false }
+      // );
+
       function zoomIn(xMouse, yMouse) {
         const zoomFactor = 0.5; // Увеличение в 2 раза
-        const xCenter = xMin + (xMouse / width) * (xMax - xMin);
-        const yCenter = yMin + (yMouse / height) * (yMax - yMin);
+        const xCenter = xMin + (xMouse / widthToZoom) * (xMax - xMin);
+        const yCenter = yMin + (yMouse / heightToZoom) * (yMax - yMin);
 
+        console.log(xCenter, yCenter, yMouse, widthToZoom);
         xMin = xCenter + (xMin - xCenter) * zoomFactor;
         xMax = xCenter + (xMax - xCenter) * zoomFactor;
         yMin = yCenter + (yMin - yCenter) * zoomFactor;
@@ -244,8 +257,9 @@
 
       function zoomInAuto() {
         const zoomFactor = 0.9;
-        const xCenter = xMin + (width / 2 / width) * (xMax - xMin);
-        const yCenter = yMin + (height / 2 / height) * (yMax - yMin);
+        const xCenter = xMin + (widthToZoom / 2 / widthToZoom) * (xMax - xMin);
+        const yCenter =
+          yMin + (heightToZoom / 2 / heightToZoom) * (yMax - yMin);
 
         xMin = xCenter + (xMin - xCenter) * zoomFactor;
         xMax = xCenter + (xMax - xCenter) * zoomFactor;
@@ -286,41 +300,41 @@
         }, 200);
       });
 
-      canvas.addEventListener("touchstart", (event) => {
-        if (event.touches.length === 2) {
-          const dx = event.touches[0].clientX - event.touches[1].clientX;
-          const dy = event.touches[0].clientY - event.touches[1].clientY;
-          lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
-        }
-      });
+      // canvas.addEventListener("touchstart", (event) => {
+      //   if (event.touches.length === 2) {
+      //     const dx = event.touches[0].clientX - event.touches[1].clientX;
+      //     const dy = event.touches[0].clientY - event.touches[1].clientY;
+      //     lastTouchDistance = Math.sqrt(dx * dx + dy * dy);
+      //   }
+      // });
 
-      canvas.addEventListener("touchmove", (event) => {
-        if (event.touches.length === 2 && lastTouchDistance !== null) {
-          const dx = event.touches[0].clientX - event.touches[1].clientX;
-          const dy = event.touches[0].clientY - event.touches[1].clientY;
-          const currentTouchDistance = Math.sqrt(dx * dx + dy * dy);
+      // canvas.addEventListener("touchmove", (event) => {
+      //   if (event.touches.length === 2 && lastTouchDistance !== null) {
+      //     const dx = event.touches[0].clientX - event.touches[1].clientX;
+      //     const dy = event.touches[0].clientY - event.touches[1].clientY;
+      //     const currentTouchDistance = Math.sqrt(dx * dx + dy * dy);
 
-          const zoomFactor = currentTouchDistance / lastTouchDistance;
+      //     const zoomFactor = currentTouchDistance / lastTouchDistance;
 
-          const rect = canvas.getBoundingClientRect();
-          const xMouse = (event.touches[0].clientX - rect.left) / width;
-          const yMouse = (event.touches[0].clientY - rect.top) / height;
-          const xCenter = xMin + xMouse * (xMax - xMin);
-          const yCenter = yMin + yMouse * (yMax - yMin);
+      //     const rect = canvas.getBoundingClientRect();
+      //     const xMouse = (event.touches[0].clientX - rect.left) / width;
+      //     const yMouse = (event.touches[0].clientY - rect.top) / height;
+      //     const xCenter = xMin + xMouse * (xMax - xMin);
+      //     const yCenter = yMin + yMouse * (yMax - yMin);
 
-          xMin = xCenter + (xMin - xCenter) / zoomFactor;
-          xMax = xCenter + (xMax - xCenter) / zoomFactor;
-          yMin = yCenter + (yMin - yCenter) / zoomFactor;
-          yMax = yCenter + (yMax - yCenter) / zoomFactor;
+      //     xMin = xCenter + (xMin - xCenter) / zoomFactor;
+      //     xMax = xCenter + (xMax - xCenter) / zoomFactor;
+      //     yMin = yCenter + (yMin - yCenter) / zoomFactor;
+      //     yMax = yCenter + (yMax - yCenter) / zoomFactor;
 
-          mandelbrot();
-          lastTouchDistance = currentTouchDistance;
-        }
-      });
+      //     mandelbrot();
+      //     lastTouchDistance = currentTouchDistance;
+      //   }
+      // });
 
-      canvas.addEventListener("touchend", () => {
-        lastTouchDistance = null;
-      });
+      // canvas.addEventListener("touchend", () => {
+      //   lastTouchDistance = null;
+      // });
 
       document
         .getElementById("colorBlackWhite")
@@ -345,8 +359,8 @@
         const rect = canvas.getBoundingClientRect();
         const xMouse = event.clientX - rect.left;
         const yMouse = event.clientY - rect.top;
-        const xCenter = xMin + (xMouse / width) * (xMax - xMin);
-        const yCenter = yMin + (yMouse / height) * (yMax - yMin);
+        const xCenter = xMin + (xMouse / widthToZoom) * (xMax - xMin);
+        const yCenter = yMin + (yMouse / heightToZoom) * (yMax - yMin);
 
         xMin = xCenter + (xMin - xCenter) / zoomFactor;
         xMax = xCenter + (xMax - xCenter) / zoomFactor;
