@@ -2,7 +2,11 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Множество Мандельброта</title>
     <style>
       body {
@@ -16,6 +20,8 @@
       canvas {
         border: 1px solid #fff;
         background: black;
+        width: 800px;
+        height: 800px;
       }
       #controls {
         margin: 10px;
@@ -30,6 +36,17 @@
       #info {
         color: white;
         margin: 10px;
+      }
+
+      @media screen and (max-width: 600px) {
+        body {
+          flex-direction: column;
+        }
+
+        canvas {
+          width: 100vw !important;
+          height: 100vw !important;
+        }
       }
     </style>
   </head>
@@ -64,14 +81,14 @@
 
       const canvas = document.getElementById("mandelbrotCanvas");
       const ctx = canvas.getContext("2d");
-      const width = canvas.width;
-      const height = canvas.height;
+      const width = 800;
+      const height = 800;
 
       let xMin = -2;
       let xMax = 2;
       let yMin = -2;
       let yMax = 2;
-      let maxIter = 400;
+      let maxIter = 40;
       let colorMode = "RGB"; // Default color mode
 
       function getDefaultBgColor() {
