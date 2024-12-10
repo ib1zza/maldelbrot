@@ -1,10 +1,16 @@
 body {
     min-height: 100vh;
-    /* touch-action: pan-y; Allows vertical panning but disables zooming */
     overflow: hidden;
 
     font-family: 'Apple System', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-} 
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #000;
+}
 
 button, .btn {
     padding: 5px 15px;
@@ -13,7 +19,53 @@ button, .btn {
     border-radius: 10px;
     cursor: pointer;
     margin: 5px;
-    font-size: 12px;
+    font-size: 16px;
+
     border: none;
     outline: none;
-} 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+canvas {
+    border: 1px solid #fff;
+    background: black;
+    width: 100vh;
+    height: 100vh;
+}
+#controls {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+}
+button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.colors, .zoomControls, .points {
+    display: flex;
+
+}
+#info {
+    color: white;
+    margin: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    body {
+        flex-direction: column;
+    }
+
+    canvas {
+        width: 100vw !important;
+        height: 100vw !important;
+    }
+
+    button, .btn {
+        font-size: 12px;
+    }
+}
