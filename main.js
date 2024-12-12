@@ -1,5 +1,4 @@
 import { Draw } from "./draw.js";
-import { Utils } from "./utils.js";
 
 class Main {
   constructor() {
@@ -8,7 +7,6 @@ class Main {
     this.width = 800;
     this.height = 800;
     this.draw = new Draw(this.canvas, this.ctx, this.width, this.height);
-    this.utils = new Utils();
     this.init();
   }
 
